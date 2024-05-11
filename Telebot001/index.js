@@ -20,17 +20,17 @@ const bot = new TelegramBot(token, { polling: true });
 
 // Dictionary to store exam status for each user
 const examStatus = {};
-
-// Dictionary to store user responses
 const userResponses = {};
-
-let examInProgress = false; // Variable to track if the exam process is ongoing
 
 // Command handling
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-    if (!examStatus[chatId]) { // Check if the user's exam is not in progress
-        examStatus[chatId] = true; // Set exam status to true
+    if (!examStatus[chatId]) {
+        examStatus[chatId] = { inProgress: false }; // Set exam status for the user
+    }
+
+    if (!examStatus[chatId].inProgress) {
+        examStatus[chatId].inProgress = true; // Set exam status to true
         userResponses[chatId] = []; // Initialize user responses array
         // Ask for name and surname
         bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın:');

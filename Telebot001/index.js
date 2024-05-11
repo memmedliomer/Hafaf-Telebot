@@ -14,16 +14,17 @@ app.listen(port, () => {
 });
 
 // Replace the value below with the Telegram token you receive from @BotFather
-const token =process.env.BOT;
+const token = process.env.BOT;
 
 const bot = new TelegramBot(token, { polling: true });
 
-let examInProgress = false; // Variable to track if the exam process is ongoing
+// Dictionary to store exam status for each user
+const examStatus = {};
 
 // Command handling
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
-    if (!examInProgress) { // Check if the exam is not in progress
+    if (!examStatus[chatId]) { // Check if the user's exam is not in progress
         bot.sendMessage(chatId, 'Salam. Hədəf Steam Liseyinin balabilgəsi Ömər Məmmədlinin DIM imtahan nəticənizi hesablamaq üçün düzəltdiyi bota xoş gəldiniz!\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
@@ -40,7 +41,7 @@ bot.onText(/\/start/, (msg) => {
 // Listen for button "11" press
 bot.onText(/11/, (msg) => {
     const chatId = msg.chat.id;
-    if (!examInProgress) { // Check if the exam is not in progress
+    if (!examStatus[chatId]) { // Check if the user's exam is not in progress
         bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
     } else {
         bot.sendMessage(chatId, 'İndi başqa imtahan nəticəsi hesablanır, nəticə hesablandıqdan sonra bir də cəhd edin');
@@ -73,7 +74,7 @@ function askQuestion(chatId, questions, answers, index = 0) {
         const totalScore = calculateTotalScore(englishScore, azerbaijaniScore, mathScore);
 
         bot.sendMessage(chatId, `Ad: ${firstName}\nSoyad: ${lastName}\nSinif: 9\nİngilis dili: ${englishScore.toFixed(2)}\nAzərbaycan dili: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat: ${mathScore.toFixed(2)}\n\nSizin ümümmi nəticəniz: ${totalScore.toFixed(2)}`);
-        examInProgress = false; // Set exam in progress to false after results are announced
+        delete examStatus[chatId]; // Delete exam status after results are announced
         return;
     }
 
@@ -97,18 +98,14 @@ function validateInput(value, maxValue) {
     return value >= 0 && value <= maxValue && Number.isInteger(value);
 }
 
-function containsNine(input) {
-    return input.includes('9');
-}
-
 // Handling incoming messages
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
     const text = msg.text.toString().toLowerCase();
 
     // If "9" button is pressed and the exam is not in progress
-    if (text === '9' && !examInProgress) {
-        examInProgress = true; // Set exam in progress to true
+    if (text === '9' && !examStatus[chatId]) {
+        examStatus[chatId] = true; // Set exam status to true
         // Ask for name and surname
         bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın:');
         bot.once('message', (msg) => {
@@ -119,11 +116,10 @@ bot.on('message', (msg) => {
                 askName(chatId);
                 return;
             }
-          
+
             // Array to store answers
             const answers = [fullName];
 
-            // Define questions for each subject
             const questions = [
                 {
                     text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını  yazın.',

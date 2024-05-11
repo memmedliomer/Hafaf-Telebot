@@ -24,7 +24,7 @@ const examStatus = {};
 bot.onText(/\/start/, (msg) => {
     const chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
-        bot.sendMessage(chatId, 'Salam. Hədəf Steam Liseyinin balabilgəsi Ömər Məmmədlinin DIM imtahan nəticənizi hesablamaq üçün düzəltdiyi bota xoş gəldiniz!\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+        bot.sendMessage(chatId, 'Salam. Hədəf Steam Liseyinin balabilgəsi Ömər Məmmədlinin DIM imtahan nəticənizi hesablamaq üçün düzəltdiyi bota xoş gəldiniz!\n\nZəhmət olmasa menyudan sinifiniziseçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]
@@ -125,15 +125,15 @@ bot.on('message', (msg) => {
                     maxValue: 26
                 },
                 {
-                    text: 'İngilis dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+                    text: 'İngilis dili fənnindən 4 açıq sualdandüzgün cavablarınızın sayını yazın.',
                     maxValue: 4
                 },
                 {
-                    text: 'Azərbaycan dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+                    text: 'Azərbaycan dili fənnindən 26 qapalı sualdandüzgün cavablarınızın sayını yazın.',
                     maxValue: 26
                 },
                 {
-                    text: 'Azərbaycan dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+                    text: 'Azərbaycan dili fənnindən 4 açıq sualdandüzgün cavablarınızın sayını yazın.',
                     maxValue: 4
                 },
                 {
@@ -155,6 +155,57 @@ bot.on('message', (msg) => {
         });
     }
 });
+
+// Function to ask for the name again
+function askName(chatId) {
+    bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın...');
+    bot.once('message', (msg) => {
+        const fullName = msg.text.split(' ');
+        if (fullName.length !== 2) {
+            bot.sendMessage(chatId, 'Yanlış yazdınız.');
+            // Recursive call to ask for the name again
+            askName(chatId);
+            return;
+        }
+
+        // Proceed to asking questions if the name is entered correctly
+        const answers = [fullName];
+
+        const questions = [
+            {
+                text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını  yazın.',
+                maxValue: 26
+            },
+            {
+                text: 'İngilis dili fənnindən 4 açıq sualdandüzgün cavablarınızın sayını yazın.',
+                maxValue: 4
+            },
+            {
+                text: 'Azərbaycan dili fənnindən 26 qapalı sualdandüzgün cavablarınızın sayını yazın.',
+                maxValue: 26
+            },
+            {
+                text: 'Azərbaycan dili fənnindən 4 açıq sualdandüzgün cavablarınızın sayını yazın.',
+                maxValue: 4
+            },
+            {
+                text: 'Riyaziyyat fənnindən 15 qapalı sualdan doğru olanların sayını yazın.',
+                maxValue: 15
+            },
+            {
+                text: 'Riyaziyyat fənnindən 6 açıq kodlaşdırıla bilən sualdan doğru olanların sayını yazın.',
+                maxValue: 6
+            },
+            {
+                text: 'Riyaziyyat fənnindən 4 tam açıq sualdan doğru olanların sayını yazın.',
+                maxValue: 4
+            }
+        ];
+
+        // Ask questions sequentially
+        askQuestion(chatId, questions, answers);
+    });
+}
 
 // Error handling
 bot.on('polling_error', (error) => {

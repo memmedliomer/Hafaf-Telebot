@@ -2,12 +2,11 @@ const TelegramBot = require("node-telegram-bot-api");
 const express = require("express");
 
 const app = express();
+const port = 3000;
 
 app.get("/", (req, res) => {
     res.send("Bot is alive");
 });
-
-const port = 3000;
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);

@@ -14,7 +14,7 @@ app.listen(port, () => {
 });
 
 // Replace the value below with the Telegram token you receive from @BotFather
-const token = process.env.BOT_TOKEN;
+const token = process.env.BOT;
 
 const bot = new TelegramBot(token, { polling: true });
 

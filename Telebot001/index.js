@@ -98,6 +98,10 @@ function validateInput(value, maxValue) {
     return value >= 0 && value <= maxValue && Number.isInteger(value);
 }
 
+function containsNine(input) {
+    return input.includes('9');
+}
+
 // Handling incoming messages
 bot.on('message', (msg) => {
     const chatId = msg.chat.id;
@@ -116,10 +120,11 @@ bot.on('message', (msg) => {
                 askName(chatId);
                 return;
             }
-
+          
             // Array to store answers
             const answers = [fullName];
 
+            // Define questions for each subject
             const questions = [
                 {
                     text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını  yazın.',

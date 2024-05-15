@@ -16,7 +16,7 @@ app.listen(port, () => {
 });
 
 // Replace the value below with the Telegram token you receive from @BotFather
-const token = "5405137319:AAGqugBjHA0QbPIdT6wWdXfn2BSIGT6PV48";  // Bot tokeninizi buraya girin
+const token = "7189509884:AAH4tb1tilcmBOVQ5ad7O6tSj0EuISwbc5g";  // Bot tokeninizi buraya girin
 
 const bot = new TelegramBot(token, { polling: true });
 

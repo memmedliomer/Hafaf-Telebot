@@ -55,9 +55,6 @@ const questions = [
     }
 ];
 
-
-
-
 // Dictionary to store exam status for each user
 var examStatus = {};
 
@@ -80,7 +77,9 @@ bot.onText(/\/start/, (msg) => {
 }
 );
 
-// Listen for button "11" press
+
+
+
 
 // Function to calculate English score
 function calculateScore(closedQuestions, openQuestions) {
@@ -104,60 +103,67 @@ function validateInput(value, maxValue) {
     return value >= 0 && value <= maxValue && Number.isInteger(value);
 }
 
+// Function to validate name and surname
+function validateNameSurname(input) {
+    const parts = input.trim().split(/\s+/);
+    return parts.length === 2 && parts[0] && parts[1];
+}
+
 bot.on('message', (msg) => {
     let chatId = msg.chat.id;
-    if (msg.text == '9' && letnow[msg.chat.id]===undefined) {
-        letnow[chatId] = [1,9]
-        users[chatId] = []
-        bot.sendMessage(chatId, questions[0].text)
-    } 
-    else if(msg.text=='11' && letnow[msg.chat.id]===undefined){
-        let chatId = msg.chat.id;
-            bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
-    }
-    else {
-        if (msg.text == '/start')  
-        {
-            delete users[chatId]
-            delete letnow[chatId]
-        }
-            
-            else{
-            let quiz = letnow[chatId]
-            let num = parseInt(msg.text)
-           
-            if (commands.indexOf(num) == -1) {
-                if (quiz[1] == 9 && questions[quiz[0]-1].maxValue >= parseInt(num)) {
-                    
-                    console.log(letnow)
-                    users[msg.chat.id].push(num)
-                    if(quiz[0]==7){
-                        delete letnow[msg.chat.id]
-                        const a=users[chatId]
-                        const az=calculateScore(a[0],a[1])
-                        const eng=calculateScore(a[2],a[3])
-                        const math = calculateMathScore(a[4],a[5],a[6])
-                        const total = calculateTotalScore(az,eng,math)
-                        bot.sendMessage(msg.chat.id,"Toplam balınız: "+parseInt(total))
-                        delete users[chatId]
-                        return 0;
-        
-                    }
-                    bot.sendMessage(msg.chat.id, questions[letnow[msg.chat.id][0]].text)
-                    letnow[msg.chat.id] = [quiz[0] + 1,9]
-                    
 
+    if (msg.text == '9' && letnow[chatId] === undefined) {
+        bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın.');
+        letnow[chatId] = [0, 9]; // Stage 0 indicates asking for name and surname
+        users[chatId] = { answers: [] }; // Initialize user's data structure
+    } else if (msg.text == '11' && letnow[chatId] === undefined) {
+        bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
+    } else {
+        if (msg.text == '/start') {
+            delete users[chatId];
+            delete letnow[chatId];
+        } else {
+            let stage = letnow[chatId][0];
+
+            if (stage === 0) { // Asking for name and surname
+                if (validateNameSurname(msg.text)) {
+                    users[chatId].nameSurname = msg.text.trim();
+                    bot.sendMessage(chatId, questions[0].text);
+                    letnow[chatId][0] = 1; // Move to next stage
                 } else {
-                    bot.sendMessage(msg.chat.id, "Yenidən gir.")
+                    bot.sendMessage(chatId, 'Zəhmət olmasa həm adınızı, həm də soyadınızı arada boşluq olmaqla yazın.');
+                }
+            } else {
+                let quiz = letnow[chatId];
+                let num = parseInt(msg.text);
+
+                if (commands.indexOf(num) == -1) {
+                    if (quiz[1] == 9 && questions[quiz[0] - 1].maxValue >= num) {
+                        users[chatId].answers.push(num);
+
+                        if (quiz[0] == 7) {
+                            delete letnow[chatId];
+                            const a = users[chatId].answers;
+                            const az = calculateScore(a[0], a[1]).toFixed(2);
+                            const eng = calculateScore(a[2], a[3]).toFixed(2);
+                            const math = calculateMathScore(a[4], a[5], a[6]).toFixed(2);
+                            const total = calculateTotalScore(az, eng, math);
+                            const nameSurname = users[chatId].nameSurname;
+
+                            bot.sendMessage(chatId, `${nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin ümumi nəticəniz: ${parseInt(total)}bal`);
+                            delete users[chatId];
+                            return;
+                        }
+                        bot.sendMessage(chatId, questions[quiz[0]].text);
+                        letnow[chatId][0] = quiz[0] + 1;
+                    } else {
+                        bot.sendMessage(chatId, "Səhv yazdınız zəhmət olmasa yenidən yazın.");
+                    }
                 }
             }
         }
     }
 });
-
-;
-// Function to ask for the name again
-
 
 // Error handling
 bot.on('polling_error', (error) => {

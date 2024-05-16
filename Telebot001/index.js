@@ -100,8 +100,8 @@ async function batchDeleteMessages(chatId, messageIdsArray) {
             await bot.deleteMessage(chatId, msgId);
         } catch (error) {
             console.error(`Failed to delete message ${msgId} in chat ${chatId}:`, error);
-            // Break if there is an error and continue with a delay
-            await new Promise(resolve => setTimeout(resolve, 1000));
+            // Delay before trying to delete the next message
+            await new Promise(resolve => setTimeout(resolve, 1500));
         }
     }
 }

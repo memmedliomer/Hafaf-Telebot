@@ -17,7 +17,7 @@ app.listen(port, () => {
 });
 
 // Replace the value below with the Telegram token you receive from @BotFather
-const token = "7189509884:AAEcpDDQNlfsBbdYGuylHsFiPUPYN1OadP8";
+const token = "YOUR_TELEGRAM_BOT_TOKEN";
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -27,19 +27,19 @@ var letnow = {};
 
 const questions9 = [
     {
-        text: 'İngilis dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
-        text: 'İngilis dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     },
     {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     },
     {
@@ -58,11 +58,11 @@ const questions9 = [
 
 const questions11 = [
     {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 20 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən 20 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 20
     },
     {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 10 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən 10 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 10
     },
     {
@@ -70,7 +70,7 @@ const questions11 = [
         maxValue: 13
     },
     {
-        text: 'Riyaziyyat fənnindən 5açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Riyaziyyat fənnindən 5 kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 5
     },
     {
@@ -78,11 +78,11 @@ const questions11 = [
         maxValue: 7
     },
     {
-        text: 'İngilis dili fənnindən ümumilikdə 23 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən 23 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 23
     },
     {
-        text: 'İngilis dili fənnindən ümumilikdə 7 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən 7 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 7
     }
 ];
@@ -139,28 +139,22 @@ function validateNameSurname(input) {
 // Function to delete chat history
 async function clearChatHistory(chatId) {
     if (messageIds[chatId]) {
-        await batchDeleteMessages(chatId, messageIds[chatId]);
-        delete messageIds[chatId];
-    }
-}
-
-// Batch delete function
-async function batchDeleteMessages(chatId, messageIdsArray) {
-    for (const msgId of messageIdsArray) {
-        try {
-            await bot.deleteMessage(chatId, msgId);
-        } catch (error) {
-            console.error(`Failed to delete message ${msgId} in chat ${chatId}:`, error);
-            // Delay before trying to delete the next message
-            await new Promise(resolve => setTimeout(resolve, 1500));
+        for (const messageId of messageIds[chatId]) {
+            try {
+                await bot.deleteMessage(chatId, messageId);
+            } catch (error) {
+                console.error(`Failed to delete message ${messageId} in chat ${chatId}:`, error);
+                // If deletion fails, continue with the next message
+            }
         }
+        delete messageIds[chatId];
     }
 }
 
 bot.onText(/\/start/, (msg) => {
     var chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
-        bot.sendMessage(chatId, 'Salam.Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamağınız üçün düzəltdiyi bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n /start - Botun işə salınması\n /return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n /clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 2.4 kimi kəsr şəkindədə yaza bilərsiniz.Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız\n\nBota şəkil,video,fayl,səs yazısı göndərmək qəti qadağandır\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+        bot.sendMessage(chatId, 'Salam.Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamağınız üçün düzəltdiyi bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n /start - Botun işə salınması\n /return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n /clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 2.4 kimi kəsr şəkindədə yaza bilərsiniz.Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]

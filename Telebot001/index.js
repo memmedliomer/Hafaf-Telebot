@@ -195,7 +195,7 @@ bot.on('message', (msg) => {
                             const az = parseFloat(calculateScore(users[chatId].answers[2], users[chatId].answers[3]).toFixed(2));
                             const math = parseFloat(calculateMathScore(users[chatId].answers[4], users[chatId].answers[5], users[chatId].answers[6]).toFixed(2));
                             const total = parseFloat(calculateTotalScore(eng, az, math).toFixed(2));
-                            bot.sendMessage(chatId, `${users[chatId].nameSurname}\n\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\Sizin yekun nəticəniz: ${total}`).then((sentMsg) => {
+                            bot.sendMessage(chatId, `${users[chatId].nameSurname}\n\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin yekun nəticəniz: ${total}`).then((sentMsg) => {
                                 messageIds[chatId].push(sentMsg.message_id);
                             });
                             delete users[chatId];

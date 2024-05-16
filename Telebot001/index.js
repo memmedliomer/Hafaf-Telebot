@@ -11,7 +11,6 @@ const port = 3000;
 
 var users = {};
 var messageIds = {}; // Store message IDs for each user
-var lastClassSelectionMessageId = {}; // Store the last class selection message ID for each user
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
@@ -86,14 +85,11 @@ function validateNameSurname(input) {
     return parts.length === 2 && parts[0] && parts[1];
 }
 
-// Function to delete chat history from the last class selection
+// Function to delete chat history
 async function clearChatHistory(chatId) {
-    if (messageIds[chatId] && lastClassSelectionMessageId[chatId]) {
-        const startIndex = messageIds[chatId].indexOf(lastClassSelectionMessageId[chatId]) + 1;
-        const messagesToDelete = messageIds[chatId].slice(startIndex);
-        await batchDeleteMessages(chatId, messagesToDelete);
-        // Remove deleted messages from the array
-        messageIds[chatId] = messageIds[chatId].slice(0, startIndex);
+    if (messageIds[chatId]) {
+        await batchDeleteMessages(chatId, messageIds[chatId]);
+        delete messageIds[chatId];
     }
 }
 
@@ -104,8 +100,8 @@ async function batchDeleteMessages(chatId, messageIdsArray) {
             await bot.deleteMessage(chatId, msgId);
         } catch (error) {
             console.error(`Failed to delete message ${msgId} in chat ${chatId}:`, error);
-            // Delay before trying to delete the next message
-            await new Promise(resolve => setTimeout(resolve, 1500));
+            // Break if there is an error and continue with a delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
 }
@@ -144,14 +140,12 @@ bot.on('message', (msg) => {
         bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın.').then((sentMsg) => {
             messageIds[chatId].push(sentMsg.message_id);
         });
-        lastClassSelectionMessageId[chatId] = msg.message_id; // Save the class selection message ID
         letnow[chatId] = [0, 9]; // Stage 0 indicates asking for name and surname
         users[chatId] = { answers: [] }; // Initialize user's data structure
     } else if (msg.text == '11' && letnow[chatId] === undefined) {
         bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür').then((sentMsg) => {
             messageIds[chatId].push(sentMsg.message_id);
         });
-        lastClassSelectionMessageId[chatId] = msg.message_id; // Save the class selection message ID
     } else {
         if (msg.text == '/start') {
             delete users[chatId];

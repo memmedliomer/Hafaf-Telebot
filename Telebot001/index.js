@@ -20,7 +20,7 @@ const token = "7189509884:AAH4tb1tilcmBOVQ5ad7O6tSj0EuISwbc5g";
 
 const bot = new TelegramBot(token, { polling: true });
 
-const commands = ['/start']
+const commands = ['/start', '/return'];
 
 var letnow = {}
 
@@ -58,7 +58,32 @@ const questions = [
 // Dictionary to store exam status for each user
 var examStatus = {};
 
-// Command handling
+// Function to calculate English score
+function calculateScore(closedQuestions, openQuestions) {
+    return (((openQuestions * 2) + closedQuestions) * 100) / 34;
+}
+
+// Function to calculate Mathematics score
+function calculateMathScore(nQ, nAK, nA) {
+    return (((nA * 2) + nAK + nQ) * 100) / 29;
+}
+
+// Function to calculate total score
+function calculateTotalScore(englishScore, azerbaijaniScore, mathScore) {
+    return englishScore + azerbaijaniScore + mathScore;
+}
+
+// Function to validate input
+function validateInput(value, maxValue) {
+    return value >= 0 && value <= maxValue && Number.isInteger(value);
+}
+
+// Function to validate name and surname
+function validateNameSurname(input) {
+    const parts = input.trim().split(/\s+/);
+    return parts.length === 2 && parts[0] && parts[1];
+}
+
 bot.onText(/\/start/, (msg) => {
     var chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
@@ -77,38 +102,6 @@ bot.onText(/\/start/, (msg) => {
 }
 );
 
-
-
-
-
-// Function to calculate English score
-function calculateScore(closedQuestions, openQuestions) {
-    return (((openQuestions * 2) + closedQuestions) * 100) / 34;
-}
-
-// Function to calculate Mathematics score
-function calculateMathScore(nQ, nAK, nA) {
-    return (((nA * 2) + nAK + nQ) * 100) / 29;
-}
-
-// Function to calculate total score
-function calculateTotalScore(englishScore, azerbaijaniScore, mathScore) {
-    return englishScore + azerbaijaniScore + mathScore;
-}
-
-// Recursive function to ask questions sequentially
-
-// Function to validate input
-function validateInput(value, maxValue) {
-    return value >= 0 && value <= maxValue && Number.isInteger(value);
-}
-
-// Function to validate name and surname
-function validateNameSurname(input) {
-    const parts = input.trim().split(/\s+/);
-    return parts.length === 2 && parts[0] && parts[1];
-}
-
 bot.on('message', (msg) => {
     let chatId = msg.chat.id;
 
@@ -122,6 +115,14 @@ bot.on('message', (msg) => {
         if (msg.text == '/start') {
             delete users[chatId];
             delete letnow[chatId];
+        } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
+            let stage = letnow[chatId][0];
+            if (stage > 1) {
+                letnow[chatId][0] = stage - 1;
+                bot.sendMessage(chatId, `Əvvəlki suala qayıdın və cavabınızı dəyişdirin: ${questions[stage - 2].text}`);
+            } else {
+                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.');
+            }
         } else {
             let stage = letnow[chatId][0];
 
@@ -137,20 +138,20 @@ bot.on('message', (msg) => {
                 let quiz = letnow[chatId];
                 let num = parseInt(msg.text);
 
-                if (commands.indexOf(num) == -1) {
-                    if (quiz[1] == 9 && questions[quiz[0] - 1].maxValue >= num) {
-                        users[chatId].answers.push(num);
+                if (commands.indexOf(msg.text) == -1) {
+                    if (validateInput(num, questions[quiz[0] - 1].maxValue)) {
+                        users[chatId].answers[quiz[0] - 1] = num;
 
                         if (quiz[0] == 7) {
                             delete letnow[chatId];
                             const a = users[chatId].answers;
-                            const az = calculateScore(a[0], a[1]).toFixed(2);
-                            const eng = calculateScore(a[2], a[3]).toFixed(2);
+                            const az = calculateScore(a[2], a[3]).toFixed(2);
+                            const eng = calculateScore(a[0], a[1]).toFixed(2);
                             const math = calculateMathScore(a[4], a[5], a[6]).toFixed(2);
-                            const total = calculateTotalScore(az, eng, math);
+                            const total = calculateTotalScore(az, eng, math).toFixed(2);
                             const nameSurname = users[chatId].nameSurname;
 
-                            bot.sendMessage(chatId, `${nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin ümumi nəticəniz: ${parseInt(total)}bal`);
+                            bot.sendMessage(chatId, `${nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin ümumi nəticəniz: ${parseInt(total)} bal`);
                             delete users[chatId];
                             return;
                         }

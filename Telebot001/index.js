@@ -9,7 +9,7 @@ app.get("/", (req, res) => {
 
 const port = 3000;
 
-var users = {}
+var users = {};
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
@@ -20,9 +20,10 @@ const token = "7189509884:AAH4tb1tilcmBOVQ5ad7O6tSj0EuISwbc5g";
 
 const bot = new TelegramBot(token, { polling: true });
 
-const commands = ['/start', '/return'];
+const commands = ['/start', '/return', '/clear'];
 
-var letnow = {}
+var letnow = {};
+var messageIds = {}; // Store message IDs for each user
 
 const questions = [
     {
@@ -84,6 +85,20 @@ function validateNameSurname(input) {
     return parts.length === 2 && parts[0] && parts[1];
 }
 
+// Function to delete chat history
+async function clearChatHistory(chatId) {
+    if (messageIds[chatId]) {
+        for (const msgId of messageIds[chatId]) {
+            try {
+                await bot.deleteMessage(chatId, msgId);
+            } catch (error) {
+                console.error(`Failed to delete message ${msgId} in chat ${chatId}:`, error);
+            }
+        }
+        delete messageIds[chatId];
+    }
+}
+
 bot.onText(/\/start/, (msg) => {
     var chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
@@ -94,34 +109,53 @@ bot.onText(/\/start/, (msg) => {
                 ],
                 resize_keyboard: true
             }
+        }).then((sentMsg) => {
+            messageIds[chatId] = [sentMsg.message_id];
         });
     } else {
         bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
     }
-    return
-}
-);
+    return;
+});
 
 bot.on('message', (msg) => {
     let chatId = msg.chat.id;
 
+    if (!messageIds[chatId]) {
+        messageIds[chatId] = [];
+    }
+    messageIds[chatId].push(msg.message_id);
+
     if (msg.text == '9' && letnow[chatId] === undefined) {
-        bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın.');
+        bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın.').then((sentMsg) => {
+            messageIds[chatId].push(sentMsg.message_id);
+        });
         letnow[chatId] = [0, 9]; // Stage 0 indicates asking for name and surname
         users[chatId] = { answers: [] }; // Initialize user's data structure
     } else if (msg.text == '11' && letnow[chatId] === undefined) {
-        bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
+        bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür').then((sentMsg) => {
+            messageIds[chatId].push(sentMsg.message_id);
+        });
     } else {
         if (msg.text == '/start') {
             delete users[chatId];
             delete letnow[chatId];
+        } else if (msg.text == '/clear') {
+            clearChatHistory(chatId);
+            bot.sendMessage(chatId, 'Bütün söhbət silindi. Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
+                messageIds[chatId] = [sentMsg.message_id];
+            });
         } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
             let stage = letnow[chatId][0];
             if (stage > 1) {
                 letnow[chatId][0] = stage - 1;
-                bot.sendMessage(chatId, `Əvvəlki suala qayıdın və cavabınızı dəyişdirin: ${questions[stage - 2].text}`);
+                bot.sendMessage(chatId, `Əvvəlki suala qayıdın və cavabınızı dəyişdirin: ${questions[stage - 2].text}`).then((sentMsg) => {
+                    messageIds[chatId].push(sentMsg.message_id);
+                });
             } else {
-                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.');
+                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.').then((sentMsg) => {
+                    messageIds[chatId].push(sentMsg.message_id);
+                });
             }
         } else {
             let stage = letnow[chatId] ? letnow[chatId][0] : undefined;
@@ -129,10 +163,14 @@ bot.on('message', (msg) => {
             if (stage === 0) { // Asking for name and surname
                 if (validateNameSurname(msg.text)) {
                     users[chatId].nameSurname = msg.text.trim();
-                    bot.sendMessage(chatId, questions[0].text);
+                    bot.sendMessage(chatId, questions[0].text).then((sentMsg) => {
+                        messageIds[chatId].push(sentMsg.message_id);
+                    });
                     letnow[chatId][0] = 1; // Move to next stage
                 } else {
-                    bot.sendMessage(chatId, 'Zəhmət olmasa həm adınızı, həm də soyadınızı arada boşluq olmaqla yazın.');
+                    bot.sendMessage(chatId, 'Zəhmət olmasa həm adınızı, həm də soyadınızı arada boşluq olmaqla yazın.').then((sentMsg) => {
+                        messageIds[chatId].push(sentMsg.message_id);
+                    });
                 }
             } else if (stage !== undefined) {
                 let quiz = letnow[chatId];
@@ -155,10 +193,14 @@ bot.on('message', (msg) => {
                             delete users[chatId];
                             return;
                         }
-                        bot.sendMessage(chatId, questions[quiz[0]].text);
+                        bot.sendMessage(chatId, questions[quiz[0]].text).then((sentMsg) => {
+                            messageIds[chatId].push(sentMsg.message_id);
+                        });
                         letnow[chatId][0] = quiz[0] + 1;
                     } else {
-                        bot.sendMessage(chatId, "Səhv yazdınız zəhmət olmasa yenidən yazın.");
+                        bot.sendMessage(chatId, "Səhv yazdınız zəhmət olmasa yenidən yazın.").then((sentMsg) => {
+                            messageIds[chatId].push(sentMsg.message_id);
+                        });
                     }
                 }
             }

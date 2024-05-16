@@ -160,7 +160,7 @@ bot.on('message', (msg) => {
             let stage = letnow[chatId][0];
             if (stage > 1) {
                 letnow[chatId][0] = stage - 1;
-                bot.sendMessage(chatId, `Əvvəlki suala qayıtdInız.Cavabınızı dəyişdirin.\n ${questions[stage - 2].text}`).then((sentMsg) => {
+                bot.sendMessage(chatId, `Əvvəlki suala qayıtdınız.Cavabınızı dəyişdirin.\n${questions[stage - 2].text}`).then((sentMsg) => {
                     messageIds[chatId].push(sentMsg.message_id);
                 });
             } else {

@@ -27,19 +27,19 @@ var letnow = {};
 
 const questions = [
     {
-        text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
-        text: 'İngilis dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     },
     {
-        text: 'Azərbaycan dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
-        text: 'Azərbaycan dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     },
     {

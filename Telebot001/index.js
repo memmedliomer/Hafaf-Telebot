@@ -148,7 +148,7 @@ bot.on('message', (msg) => {
                             const az = calculateScore(a[2], a[3]).toFixed(2);
                             const eng = calculateScore(a[0], a[1]).toFixed(2);
                             const math = calculateMathScore(a[4], a[5], a[6]).toFixed(2);
-                            const total = calculateTotalScore(az, eng, math).toFixed(2);
+                            const total = calculateTotalScore(parseFloat(eng), parseFloat(az), parseFloat(math)).toFixed(2);
                             const nameSurname = users[chatId].nameSurname;
 
                             bot.sendMessage(chatId, `${nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin ümumi nəticəniz: ${parseInt(total)} bal`);

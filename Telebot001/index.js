@@ -99,6 +99,20 @@ async function clearChatHistory(chatId) {
     }
 }
 
+// Batch delete function
+async function batchDeleteMessages(chatId, messageIds) {
+    for (const msgId of messageIds) {
+        try {
+            await bot.deleteMessage(chatId, msgId);
+        } catch (error) {
+            console.error(`Failed to delete message ${msgId} in chat ${chatId}:`, error);
+            // Break if there is an error and continue with a delay
+            await new Promise(resolve => setTimeout(resolve, 1000));
+        }
+    }
+    delete messageIds[chatId];
+}
+
 bot.onText(/\/start/, (msg) => {
     var chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
@@ -141,7 +155,7 @@ bot.on('message', (msg) => {
             delete users[chatId];
             delete letnow[chatId];
         } else if (msg.text == '/clear') {
-            clearChatHistory(chatId);
+            batchDeleteMessages(chatId, messageIds[chatId]);
             bot.sendMessage(chatId, 'Bütün söhbət silindi. Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
                 messageIds[chatId] = [sentMsg.message_id];
             });
@@ -178,23 +192,17 @@ bot.on('message', (msg) => {
 
                 if (commands.indexOf(msg.text) == -1) {
                     if (validateInput(num, questions[quiz[0] - 1].maxValue)) {
-                        users[chatId].answers[quiz[0] - 1] = num;
-
-                        if (quiz[0] == 7) {
-                            delete letnow[chatId];
-                            const a = users[chatId].answers;
-                            const az = parseFloat(calculateScore(a[2], a[3]).toFixed(2));
-                            const eng = parseFloat(calculateScore(a[0], a[1]).toFixed(2));
-                            const math = parseFloat(calculateMathScore(a[4], a[5], a[6]).toFixed(2));
+                        users[chatId].answers.push(num);
+                        if (quiz[0] === questions.length) {
+                            const eng = parseFloat(calculateScore(users[chatId].answers[0], users[chatId].answers[1]).toFixed(2));
+                            const az = parseFloat(calculateScore(users[chatId].answers[2], users[chatId].answers[3]).toFixed(2));
+                            const math = parseFloat(calculateMathScore(users[chatId].answers[4], users[chatId].answers[5], users[chatId].answers[6]).toFixed(2));
                             const total = parseFloat(calculateTotalScore(eng, az, math).toFixed(2));
-                            bot.sendMessage(chatId, `Ad: ${users[chatId].nameSurname} 
-İngilis dili: ${eng} 
-Azərbaycan dili: ${az} 
-Riyaziyyat: ${math} 
-Yekun: ${total}`).then((sentMsg) => {
+                            bot.sendMessage(chatId, `Ad: ${users[chatId].nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\nYekun: ${total}`).then((sentMsg) => {
                                 messageIds[chatId].push(sentMsg.message_id);
                             });
                             delete users[chatId];
+                            delete letnow[chatId];
                             return;
                         }
                         bot.sendMessage(chatId, questions[quiz[0]].text).then((sentMsg) => {

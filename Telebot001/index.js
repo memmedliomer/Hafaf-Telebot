@@ -26,7 +26,7 @@ var letnow = {}
 
 const questions = [
     {
-        text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını  yazın.',
+        text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
@@ -124,7 +124,7 @@ bot.on('message', (msg) => {
                 bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.');
             }
         } else {
-            let stage = letnow[chatId][0];
+            let stage = letnow[chatId] ? letnow[chatId][0] : undefined;
 
             if (stage === 0) { // Asking for name and surname
                 if (validateNameSurname(msg.text)) {
@@ -134,7 +134,7 @@ bot.on('message', (msg) => {
                 } else {
                     bot.sendMessage(chatId, 'Zəhmət olmasa həm adınızı, həm də soyadınızı arada boşluq olmaqla yazın.');
                 }
-            } else {
+            } else if (stage !== undefined) {
                 let quiz = letnow[chatId];
                 let num = parseInt(msg.text);
 
@@ -145,10 +145,10 @@ bot.on('message', (msg) => {
                         if (quiz[0] == 7) {
                             delete letnow[chatId];
                             const a = users[chatId].answers;
-                            const az = calculateScore(a[2], a[3]).toFixed(2);
-                            const eng = calculateScore(a[0], a[1]).toFixed(2);
-                            const math = calculateMathScore(a[4], a[5], a[6]).toFixed(2);
-                            const total = calculateTotalScore(parseFloat(eng), parseFloat(az), parseFloat(math)).toFixed(2);
+                            const az = parseFloat(calculateScore(a[2], a[3]).toFixed(2));
+                            const eng = parseFloat(calculateScore(a[0], a[1]).toFixed(2));
+                            const math = parseFloat(calculateMathScore(a[4], a[5], a[6]).toFixed(2));
+                            const total = parseFloat(calculateTotalScore(eng, az, math).toFixed(2));
                             const nameSurname = users[chatId].nameSurname;
 
                             bot.sendMessage(chatId, `${nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin ümumi nəticəniz: ${parseInt(total)} bal`);

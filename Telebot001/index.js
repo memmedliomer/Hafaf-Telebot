@@ -88,20 +88,14 @@ function validateNameSurname(input) {
 // Function to delete chat history
 async function clearChatHistory(chatId) {
     if (messageIds[chatId]) {
-        for (const msgId of messageIds[chatId]) {
-            try {
-                await bot.deleteMessage(chatId, msgId);
-            } catch (error) {
-                console.error(`Failed to delete message ${msgId} in chat ${chatId}:`, error);
-            }
-        }
+        await batchDeleteMessages(chatId, messageIds[chatId]);
         delete messageIds[chatId];
     }
 }
 
 // Batch delete function
-async function batchDeleteMessages(chatId, messageIds) {
-    for (const msgId of messageIds) {
+async function batchDeleteMessages(chatId, messageIdsArray) {
+    for (const msgId of messageIdsArray) {
         try {
             await bot.deleteMessage(chatId, msgId);
         } catch (error) {
@@ -110,7 +104,6 @@ async function batchDeleteMessages(chatId, messageIds) {
             await new Promise(resolve => setTimeout(resolve, 1000));
         }
     }
-    delete messageIds[chatId];
 }
 
 bot.onText(/\/start/, (msg) => {
@@ -124,7 +117,10 @@ bot.onText(/\/start/, (msg) => {
                 resize_keyboard: true
             }
         }).then((sentMsg) => {
-            messageIds[chatId] = [sentMsg.message_id];
+            if (!messageIds[chatId]) {
+                messageIds[chatId] = [];
+            }
+            messageIds[chatId].push(sentMsg.message_id);
         });
     } else {
         bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
@@ -155,9 +151,10 @@ bot.on('message', (msg) => {
             delete users[chatId];
             delete letnow[chatId];
         } else if (msg.text == '/clear') {
-            batchDeleteMessages(chatId, messageIds[chatId]);
-            bot.sendMessage(chatId, 'Bütün söhbət silindi. Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
-                messageIds[chatId] = [sentMsg.message_id];
+            clearChatHistory(chatId).then(() => {
+                bot.sendMessage(chatId, 'Bütün söhbət silindi. Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
+                    messageIds[chatId] = [sentMsg.message_id];
+                });
             });
         } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
             let stage = letnow[chatId][0];

@@ -109,7 +109,7 @@ async function batchDeleteMessages(chatId, messageIdsArray) {
 bot.onText(/\/start/, (msg) => {
     var chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
-        bot.sendMessage(chatId, 'Salam.Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamağınız üçün düzəltdiyi bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n /start - Botun işə salınması\n /return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n /clear - Söhbətin silinməsi\nBota şəkil,video,fayl,səs yazısı göndərmək qəti qadağandır\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+        bot.sendMessage(chatId, 'Salam.Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamağınız üçün düzəltdiyi bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n /start - Botun işə salınması\n /return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n /clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 2.4 kimi kəsr şəkindədə yaza bilərsiniz.Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyaz yoxdur, sadəcə rəqəm yazırsınız\n\nBota şəkil,video,fayl,səs yazısı göndərmək qəti qadağandır\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]

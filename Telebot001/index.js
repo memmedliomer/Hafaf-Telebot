@@ -17,7 +17,7 @@ app.listen(port, () => {
 });
 
 // Replace the value below with the Telegram token you receive from @BotFather
-const token = "YOUR_TELEGRAM_BOT_TOKEN";
+const token = "7189509884:AAEcpDDQNlfsBbdYGuylHsFiPUPYN1OadP8";
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -27,19 +27,19 @@ var letnow = {};
 
 const questions9 = [
     {
-        text: 'İngilis dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
-        text: 'İngilis dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən ümumilikdə4 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     },
     {
-        text: 'Azərbaycan dili fənnindən 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 26
     },
     {
-        text: 'Azərbaycan dili fənnindən 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     },
     {
@@ -58,11 +58,11 @@ const questions9 = [
 
 const questions11 = [
     {
-        text: 'Azərbaycan dili fənnindən 20 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən ümumilikdə 20 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 20
     },
     {
-        text: 'Azərbaycan dili fənnindən 10 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Azərbaycan dili fənnindən ümumilikdə 10 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 10
     },
     {
@@ -70,7 +70,7 @@ const questions11 = [
         maxValue: 13
     },
     {
-        text: 'Riyaziyyat fənnindən 5 kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'Riyaziyyat fənnindən 5 açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 5
     },
     {
@@ -78,11 +78,11 @@ const questions11 = [
         maxValue: 7
     },
     {
-        text: 'İngilis dili fənnindən 23 qapalı sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən ümumilikdə 23 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 23
     },
     {
-        text: 'İngilis dili fənnindən 7 açıq sualdan düzgün cavablarınızın sayını yazın.',
+        text: 'İngilis dili fənnindən ümumilikdə 7 açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 7
     }
 ];

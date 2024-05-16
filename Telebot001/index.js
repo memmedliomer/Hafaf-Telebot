@@ -178,6 +178,7 @@ bot.on('message', (msg) => {
                         messageIds[chatId].push(sentMsg.message_id);
                     });
                     letnow[chatId][0] = 1; // Move to next stage
+                    examStatus[chatId] = true; // Mark the exam as in progress
                 } else {
                     bot.sendMessage(chatId, 'Zəhmət olmasa həm adınızı, həm də soyadınızı arada boşluq olmaqla yazın.').then((sentMsg) => {
                         messageIds[chatId].push(sentMsg.message_id);
@@ -200,6 +201,7 @@ bot.on('message', (msg) => {
                             });
                             delete users[chatId];
                             delete letnow[chatId];
+                            delete examStatus[chatId]; // Mark the exam as completed
                             return;
                         }
                         bot.sendMessage(chatId, questions[quiz[0]].text).then((sentMsg) => {

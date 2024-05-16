@@ -17,7 +17,7 @@ app.listen(port, () => {
 });
 
 // Replace the value below with the Telegram token you receive from @BotFather
-const token = "7189509884:AAH2OgcQqisNFPeXQ0nBTOlCrZYgjMPXtUQ";
+const token = "7189509884:AAEcpDDQNlfsBbdYGuylHsFiPUPYN1OadP8";
 
 const bot = new TelegramBot(token, { polling: true });
 
@@ -43,15 +43,15 @@ const questions = [
         maxValue: 4
     },
     {
-        text: 'Riyaziyyat fənnindən 15 qapalı sualdan doğru olanların sayını yazın.',
+        text: 'Riyaziyyat fənnindən 15 qapalı sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 15
     },
     {
-        text: 'Riyaziyyat fənnindən 6 açıq kodlaşdırıla bilən sualdan doğru olanların sayını yazın.',
+        text: 'Riyaziyyat fənnindən 6 açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 6
     },
     {
-        text: 'Riyaziyyat fənnindən 4 tam açıq sualdan doğru olanların sayını yazın.',
+        text: 'Riyaziyyat fənnindən 4 tam açıq sualdan düzgün cavablarınızın sayını yazın.',
         maxValue: 4
     }
 ];
@@ -109,7 +109,7 @@ async function batchDeleteMessages(chatId, messageIdsArray) {
 bot.onText(/\/start/, (msg) => {
     var chatId = msg.chat.id;
     if (!examStatus[chatId]) { // Check if the user's exam is not in progress
-        bot.sendMessage(chatId, 'Salam. Hədəf Steam Liseyinin balabilgəsi Ömər Məmmədlinin DIM imtahan nəticənizi hesablamaq üçün düzəltdiyi bota xoş gəldiniz!\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+        bot.sendMessage(chatId, 'Salam.Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamağınız üçün düzəltdiyi bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n /start - Botun işə salınması\n /return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n /clear - Söhbətin silinməsi\nBota şəkil,video,fayl,səs yazısı göndərmək qəti qadağandır\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]
@@ -152,7 +152,7 @@ bot.on('message', (msg) => {
             delete letnow[chatId];
         } else if (msg.text == '/clear') {
             clearChatHistory(chatId).then(() => {
-                bot.sendMessage(chatId, 'Bütün söhbət silindi. Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
+                bot.sendMessage(chatId, 'Bütün söhbət silindi.Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
                     messageIds[chatId] = [sentMsg.message_id];
                 });
             });
@@ -160,11 +160,11 @@ bot.on('message', (msg) => {
             let stage = letnow[chatId][0];
             if (stage > 1) {
                 letnow[chatId][0] = stage - 1;
-                bot.sendMessage(chatId, `Əvvəlki suala qayıdın və cavabınızı dəyişdirin: ${questions[stage - 2].text}`).then((sentMsg) => {
+                bot.sendMessage(chatId, `Əvvəlki suala qayıtdInız.Cavabınızı dəyişdirin.\n ${questions[stage - 2].text}`).then((sentMsg) => {
                     messageIds[chatId].push(sentMsg.message_id);
                 });
             } else {
-                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.').then((sentMsg) => {
+                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.Adınızı və soyadınız yazın.').then((sentMsg) => {
                     messageIds[chatId].push(sentMsg.message_id);
                 });
             }
@@ -195,7 +195,7 @@ bot.on('message', (msg) => {
                             const az = parseFloat(calculateScore(users[chatId].answers[2], users[chatId].answers[3]).toFixed(2));
                             const math = parseFloat(calculateMathScore(users[chatId].answers[4], users[chatId].answers[5], users[chatId].answers[6]).toFixed(2));
                             const total = parseFloat(calculateTotalScore(eng, az, math).toFixed(2));
-                            bot.sendMessage(chatId, `Ad: ${users[chatId].nameSurname}\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\nYekun: ${total}`).then((sentMsg) => {
+                            bot.sendMessage(chatId, `${users[chatId].nameSurname}\n\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\Sizin yekun nəticəniz: ${total}`).then((sentMsg) => {
                                 messageIds[chatId].push(sentMsg.message_id);
                             });
                             delete users[chatId];

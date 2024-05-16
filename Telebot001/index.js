@@ -10,6 +10,7 @@ app.get("/", (req, res) => {
 const port = 3000;
 
 var users = {};
+var messageIds = {}; // Store message IDs for each user
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
@@ -23,7 +24,6 @@ const bot = new TelegramBot(token, { polling: true });
 const commands = ['/start', '/return', '/clear'];
 
 var letnow = {};
-var messageIds = {}; // Store message IDs for each user
 
 const questions = [
     {

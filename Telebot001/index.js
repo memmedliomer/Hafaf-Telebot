@@ -1,142 +1,68 @@
-const TelegramBot = require("node-telegram-bot-api");
-const express = require("express");
+const TelegramBot = require('node-telegram-bot-api');
+const express = require('express');
 
 const app = express();
-
-app.get("/", (req, res) => {
-    res.send("Bot is alive");
-});
-
 const port = 3000;
 
-var users = {};
-var messageIds = {}; // Store message IDs for each user
+app.get('/', (req, res) => {
+    res.send('Bot is alive');
+});
 
 app.listen(port, () => {
     console.log(`Server running at http://localhost:${port}`);
 });
 
-// Replace the value below with the Telegram token you receive from @BotFather
-const token = "7189509884:AAEcpDDQNlfsBbdYGuylHsFiPUPYN1OadP8";
+const token = 'YOUR_TELEGRAM_BOT_TOKEN_HERE';
 
 const bot = new TelegramBot(token, { polling: true });
 
 const commands = ['/start', '/return', '/clear'];
 
-var letnow = {};
+let users = {};
+let messageIds = {}; 
+let letnow = {};
 
 const questions9 = [
-    {
-        text: 'İngilis dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 26
-    },
-    {
-        text: 'İngilis dili fənnindən ümumilikdə4 açıq sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 4
-    },
-    {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 26
-    },
-    {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 4
-    },
-    {
-        text: 'Riyaziyyat fənnindən 15 qapalı sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 15
-    },
-    {
-        text: 'Riyaziyyat fənnindən 6 açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 6
-    },
-    {
-        text: 'Riyaziyyat fənnindən 4 tam açıq sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 4
-    }
+    { text: 'İngilis dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.', maxValue: 26 },
+    { text: 'İngilis dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.', maxValue: 4 },
+    { text: 'Azərbaycan dili fənnindən ümumilikdə 26 qapalı sualdan düzgün cavablarınızın sayını yazın.', maxValue: 26 },
+    { text: 'Azərbaycan dili fənnindən ümumilikdə 4 açıq sualdan düzgün cavablarınızın sayını yazın.', maxValue: 4 },
+    { text: 'Riyaziyyat fənnindən 15 qapalı sualdan düzgün cavablarınızın sayını yazın.', maxValue: 15 },
+    { text: 'Riyaziyyat fənnindən 6 açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.', maxValue: 6 },
+    { text: 'Riyaziyyat fənnindən 4 tam açıq sualdan düzgün cavablarınızın sayını yazın.', maxValue: 4 }
 ];
 
 const questions11 = [
-    {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 20 qapalı sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 20
-    },
-    {
-        text: 'Azərbaycan dili fənnindən ümumilikdə 10 açıq sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 10
-    },
-    {
-        text: 'Riyaziyyat fənnindən 13 qapalı sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 13
-    },
-    {
-        text: 'Riyaziyyat fənnindən 5 açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 5
-    },
-    {
-        text: 'Riyaziyyat fənnindən 7 tam açıq sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 7
-    },
-    {
-        text: 'İngilis dili fənnindən ümumilikdə 23 qapalı sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 23
-    },
-    {
-        text: 'İngilis dili fənnindən ümumilikdə 7 açıq sualdan düzgün cavablarınızın sayını yazın.',
-        maxValue: 7
-    }
+    { text: 'Azərbaycan dili fənnindən ümumilikdə 20 qapalı sualdan düzgün cavablarınızın sayını yazın.', maxValue: 20 },
+    { text: 'Azərbaycan dili fənnindən ümumilikdə 10 açıq sualdan düzgün cavablarınızın sayını yazın.', maxValue: 10 },
+    { text: 'Riyaziyyat fənnindən 13 qapalı sualdan düzgün cavablarınızın sayını yazın.', maxValue: 13 },
+    { text: 'Riyaziyyat fənnindən 5 açıq kodlaşdırıla bilən sualdan düzgün cavablarınızın sayını yazın.', maxValue: 5 },
+    { text: 'Riyaziyyat fənnindən 7 tam açıq sualdan düzgün cavablarınızın sayını yazın.', maxValue: 7 },
+    { text: 'İngilis dili fənnindən ümumilikdə 23 qapalı sualdan düzgün cavablarınızın sayını yazın.', maxValue: 23 },
+    { text: 'İngilis dili fənnindən ümumilikdə 7 açıq sualdan düzgün cavablarınızın sayını yazın.', maxValue: 7 }
 ];
 
-// Dictionary to store exam status for each user
-var examStatus = {};
-
-// Function to calculate English score for 9th grade
-function calculateScore9(closedQuestions, openQuestions) {
-    return (((openQuestions * 2) + closedQuestions) * 100) / 34;
+async function sendMessageAndStoreId(chatId, text) {
+    try {
+        const sentMsg = await bot.sendMessage(chatId, text);
+        if (!messageIds[chatId]) {
+            messageIds[chatId] = [];
+        }
+        messageIds[chatId].push(sentMsg.message_id);
+    } catch (error) {
+        console.error(`Failed to send message to chat ${chatId}:`, error);
+    }
 }
 
-// Function to calculate Azerbaijani score for 11th grade
-function calculateAzerbaijaniScore11(ty, th) {
-    return (2.5 * ((2 * th) + ty));
-}
-
-// Function to calculate Mathematics score for 9th grade
-function calculateMathScore9(nQ, nAK, nA) {
-    return (((nA * 2) + nAK + nQ) * 100) / 29;
-}
-
-// Function to calculate Mathematics score for 11th grade
-function calculateMathScore11(rf, gh, fg) {
-    return ((25 / 8) * ((2 * fg) + rf + gh));
-}
-
-// Function to calculate English score for 11th grade
-function calculateEnglishScore11(rd, jh) {
-    return ((100 / 37) * ((2 * jh) + rd));
-}
-
-// Function to calculate total score for 9th grade
-function calculateTotalScore9(englishScore, azerbaijaniScore, mathScore) {
-    return englishScore + azerbaijaniScore + mathScore;
-}
-
-// Function to calculate total score for 11th grade
-function calculateTotalScore11(azerbaijaniScore, mathScore, englishScore) {
-    return azerbaijaniScore + mathScore + englishScore;
-}
-
-// Function to validate input
 function validateInput(value, maxValue) {
     return value >= 0 && value <= maxValue;
 }
 
-// Function to validate name and surname
 function validateNameSurname(input) {
     const parts = input.trim().split(/\s+/);
     return parts.length === 2 && parts[0] && parts[1];
 }
 
-// Function to delete chat history
 async function clearChatHistory(chatId) {
     if (messageIds[chatId]) {
         for (const messageId of messageIds[chatId]) {
@@ -144,37 +70,58 @@ async function clearChatHistory(chatId) {
                 await bot.deleteMessage(chatId, messageId);
             } catch (error) {
                 console.error(`Failed to delete message ${messageId} in chat ${chatId}:`, error);
-                // If deletion fails, continue with the next message
             }
         }
         delete messageIds[chatId];
     }
 }
 
-bot.onText(/\/start/, (msg) => {
-    var chatId = msg.chat.id;
-    if (!examStatus[chatId]) { // Check if the user's exam is not in progress
-        bot.sendMessage(chatId, 'Salam.Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamağınız üçün düzəltdiyi bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n /start - Botun işə salınması\n /return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n /clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 4/3 kimi kəsr şəkindədə yaza bilərsiniz.Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+function calculateScore9(closedQuestions, openQuestions) {
+    return (((openQuestions * 2) + closedQuestions) * 100) / 34;
+}
+
+function calculateAzerbaijaniScore11(ty, th) {
+    return (2.5 * ((2 * th) + ty));
+}
+
+function calculateMathScore9(nQ, nAK, nA) {
+    return (((nA * 2) + nAK + nQ) * 100) / 29;
+}
+
+function calculateMathScore11(rf, gh, fg) {
+    return ((25 / 8) * ((2 * fg) + rf + gh));
+}
+
+function calculateEnglishScore11(rd, jh) {
+    return ((100 / 37) * ((2 * jh) + rd));
+}
+
+function calculateTotalScore9(englishScore, azerbaijaniScore, mathScore) {
+    return englishScore + azerbaijaniScore + mathScore;
+}
+
+function calculateTotalScore11(azerbaijaniScore, mathScore, englishScore) {
+    return azerbaijaniScore + mathScore + englishScore;
+}
+
+bot.onText(/\/start/, async (msg) => {
+    const chatId = msg.chat.id;
+    if (!users[chatId]) {
+        await sendMessageAndStoreId(chatId, 'Salam. Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamaq üçün düzəldilmiş bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n/start - Botun işə salınması\n/return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n/clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 4/3 kimi kəsr şəkilində də yaza bilərsiniz. Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız.\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]
                 ],
                 resize_keyboard: true
             }
-        }).then((sentMsg) => {
-            if (!messageIds[chatId]) {
-                messageIds[chatId] = [];
-            }
-            messageIds[chatId].push(sentMsg.message_id);
         });
     } else {
-        bot.sendMessage(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür');
+        await sendMessageAndStoreId(chatId, 'Hal-hazırda bu xidmətin aktiv olması üçün işlər görülür.');
     }
-    return;
 });
 
-bot.on('message', (msg) => {
-    let chatId = msg.chat.id;
+bot.on('message', async (msg) => {
+    const chatId = msg.chat.id;
 
     if (!messageIds[chatId]) {
         messageIds[chatId] = [];
@@ -182,79 +129,93 @@ bot.on('message', (msg) => {
     messageIds[chatId].push(msg.message_id);
 
     if ((msg.text == '9' || msg.text == '11') && letnow[chatId] === undefined) {
-        bot.sendMessage(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın.').then((sentMsg) => {
-            messageIds[chatId].push(sentMsg.message_id);
-        });
+        await sendMessageAndStoreId(chatId, 'Zəhmət olmasa adınızı və soyadınızı yazın.');
         letnow[chatId] = [0, msg.text]; // Stage 0 indicates asking for name and surname
         users[chatId] = { answers: [], grade: msg.text, currentQuestion: 0 }; // Initialize user's data structure with grade
     } else {
-        if (msg.text == '/start') {
-            delete users[chatId];
-            delete letnow[chatId];
-        } else if (msg.text == '/clear') {
-            clearChatHistory(chatId).then(() => {
-                bot.sendMessage(chatId, 'Bütün söhbət tarixçəsi silindi.');
-            });
-        } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
-            let stage = letnow[chatId][0];
-            if (stage > 1) {
-                letnow[chatId][0] = stage - 1;
-                users[chatId].currentQuestion = stage - 2; // Update current question to the previous one
-                bot.sendMessage(chatId, `Əvvəlki suala qayıtdınız. Cavabınızı dəyişdirin.\n${letnow[chatId][1] === '9' ? questions9[stage - 2].text : questions11[stage - 2].text}`).then((sentMsg) => {
-                    messageIds[chatId].push(sentMsg.message_id);
-                });
-            } else {
-                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz. Adınızı və soyadınız yazın.').then((sentMsg) => {
-                    messageIds[chatId].push(sentMsg.message_id);
-                });
-            }
+        handleUserResponse(msg, chatId);
+    }
+});
+
+async function handleUserResponse(msg, chatId) {
+    if (msg.text == '/start') {
+        delete users[chatId];
+        delete letnow[chatId];
+    } else if (msg.text == '/clear') {
+        await clearChatHistory(chatId);
+        await sendMessageAndStoreId(chatId, 'Bütün söhbət tarixçəsi silindi.');
+    } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
+        const stage = letnow[chatId][0];
+        if (stage > 1) {
+            letnow[chatId][0] = stage - 1;
+            users[chatId].currentQuestion = stage - 2; // Update current question to the previous one
+            await sendMessageAndStoreId(chatId, `Əvvəlki suala qayıtdınız. Cavabınızı dəyişdirin.\n${letnow[chatId][1] === '9' ? questions9[stage - 2].text : questions11[stage - 2].text}`);
         } else {
-            let stage = letnow[chatId] ? letnow[chatId][0] : undefined;
+            await sendMessageAndStoreId(chatId, 'Siz artıq ilk mərhələdəsiniz. Adınızı və soyadınızı yazın.');
+        }
+    } else {
+        const stage = letnow[chatId] ? letnow[chatId][0] : undefined;
 
-            if (stage === 0) { // Asking for name and surname
-                if (validateNameSurname(msg.text)) {
-                    users[chatId].nameSurname = msg.text.trim();
-                    bot.sendMessage(chatId, letnow[chatId][1] === '9' ? questions9[0].text : questions11[0].text).then((sentMsg) => {
-                        messageIds[chatId].push(sentMsg.message_id);
-                    });
-                    letnow[chatId][0] = 1; // Move to next stage
+        if (stage === 0) { // Asking for name and surname
+            if (validateNameSurname(msg.text)) {
+                users[chatId].nameSurname = msg.text.trim();
+                await sendMessageAndStoreId(chatId, letnow[chatId][1] === '9' ? questions9[0].text : questions11[0].text);
+                letnow[chatId][0] = 1; // Move to next stage
+            } else {
+                await sendMessageAndStoreId(chatId, 'Zəhmət olmasa düzgün ad və soyad daxil edin.');
+            }
+        } else if (stage !== undefined) {
+            const currentQuestion = users[chatId].currentQuestion;
+            const currentQuestions = letnow[chatId][1] === '9' ? questions9 : questions11;
+            const maxValue = currentQuestions[currentQuestion].maxValue;
+
+            if (validateInput(parseInt(msg.text), maxValue)) {
+                users[chatId].answers[currentQuestion] = parseInt(msg.text);
+                users[chatId].currentQuestion += 1;
+
+                if (users[chatId].currentQuestion < currentQuestions.length) {
+                    await sendMessageAndStoreId(chatId, currentQuestions[users[chatId].currentQuestion].text);
+                    letnow[chatId][0] += 1; // Move to next stage
                 } else {
-                    bot.sendMessage(chatId, 'Zəhmət olmasa həm adınızı, həm də soyadınızı arada boşluq olmaqla yazın.').then((sentMsg) => {
-                        messageIds[chatId].push(sentMsg.message_id);
-                    });
+                    await sendMessageAndStoreId(chatId, 'Hesablamalar aparılır, zəhmət olmasa gözləyin...');
+                    await sendResults(chatId);
                 }
-            } else if (stage !== undefined) {
-                let quiz = letnow[chatId];
-                let num = parseFloat(msg.text);
+            } else {
+                await sendMessageAndStoreId(chatId, `Düzgün cavab daxil edin (0-${maxValue}).`);
+            }
+        }
+    }
+}
 
-                if (commands.indexOf(msg.text) == -1) {
-                    let currentQuestionIndex = users[chatId].currentQuestion; // Current question index
+async function sendResults(chatId) {
+    const answers = users[chatId].answers;
+    const grade = users[chatId].grade;
 
-                    if (validateInput(num, (quiz[1] === '9' ? questions9[currentQuestionIndex].maxValue : questions11[currentQuestionIndex].maxValue))) {
-                        users[chatId].answers[currentQuestionIndex] = num; // Update the answer at the current question index
+    let resultsText;
 
-                        if (quiz[0] === (quiz[1] === '9' ? questions9.length : questions11.length)) {
-                            if (quiz[1] === '9') {
-                                const eng = parseFloat(calculateScore9(users[chatId].answers[0], users[chatId].answers[1]).toFixed(2));
-                                const az = parseFloat(calculateScore9(users[chatId].answers[2], users[chatId].answers[3]).toFixed(2));
-                                const math = parseFloat(calculateMathScore9(users[chatId].answers[4], users[chatId].answers[5], users[chatId].answers[6]).toFixed(2));
-                                const total = parseFloat(calculateTotalScore9(eng, az, math).toFixed(2));
-                                bot.sendMessage(chatId, `${users[chatId].nameSurname}\n\nİngilis dili: ${eng}\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\n\nSizin yekun nəticəniz: ${total}`).then((sentMsg) => {
-                                    messageIds[chatId].push(sentMsg.message_id);
-                                });
-                            } else if (quiz[1] === '11') {
-                                const az = parseFloat(calculateAzerbaijaniScore11(users[chatId].answers[0], users[chatId].answers[1]).toFixed(2));
-                                const math = parseFloat(calculateMathScore11(users[chatId].answers[2], users[chatId].answers[3], users[chatId].answers[4]).toFixed(2));
-                                const eng = parseFloat(calculateEnglishScore11(users[chatId].answers[5], users[chatId].answers[6]).toFixed(2));
-                                const total = parseFloat(calculateTotalScore11(az, math, eng).toFixed(2));
-                                bot.sendMessage(chatId, `${users[chatId].nameSurname}\n\nAzərbaycan dili: ${az}\nRiyaziyyat: ${math}\nİngilis dili: ${eng}\n\nSizin yekun nəticəniz: ${total}`).then((sentMsg) => {
-                                    messageIds[chatId].push(sentMsg.message_id);
-                                });
-                            }
-                            delete users[chatId];
-                            delete letnow[chatId];
-                            return;
-                        }
+    if (grade === '9') {
+        const englishScore = calculateScore9(answers[0], answers[1]);
+        const azerbaijaniScore = calculateScore9(answers[2], answers[3]);
+        const mathScore = calculateMathScore9(answers[4], answers[5], answers[6]);
+        const totalScore = calculateTotalScore9(englishScore, azerbaijaniScore, mathScore);
+
+        resultsText = `İngilis dili balınız: ${englishScore.toFixed(2)}\nAzərbaycan dili balınız: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat balınız: ${mathScore.toFixed(2)}\nÜmumi balınız: ${totalScore.toFixed(2)}`;
+    } else if (grade === '11') {
+        const azerbaijaniScore = calculateAzerbaijaniScore11(answers[0], answers[1]);
+        const mathScore = calculateMathScore11(answers[2], answers[3], answers[4]);
+        const englishScore = calculateEnglishScore11(answers[5], answers[6]);
+        const totalScore = calculateTotalScore11(azerbaijaniScore, mathScore, englishScore);
+
+        resultsText = `Azərbaycan dili balınız: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat balınız: ${mathScore.toFixed(2)}\nİngilis dili balınız: ${englishScore.toFixed(2)}\nÜmumi balınız: ${totalScore.toFixed(2)}`;
+    }
+
+    await sendMessageAndStoreId(chatId, resultsText);
+
+    // Reset user data
+    delete users[chatId];
+    delete letnow[chatId];
+}
+
                         users[chatId].currentQuestion += 1; // Move to the next question
                         bot.sendMessage(chatId, quiz[1] === '9' ? questions9[quiz[0]].text : questions11[quiz[0]].text).then((sentMsg) => {
                             messageIds[chatId].push(sentMsg.message_id);

@@ -19,7 +19,7 @@ const bot = new TelegramBot(token, { polling: true });
 const commands = ['/start', '/return', '/clear'];
 
 let users = {};
-let messageIds = {}; 
+let messageIds = {};
 let letnow = {};
 
 const questions9 = [
@@ -160,7 +160,7 @@ async function handleUserResponse(msg, chatId) {
             if (validateNameSurname(msg.text)) {
                 users[chatId].nameSurname = msg.text.trim();
                 await sendMessageAndStoreId(chatId, letnow[chatId][1] === '9' ? questions9[0].text : questions11[0].text);
-                letnow[chatId][0] = 1; // Move to next stage
+                letnow[chatId][0] += 1; // Move to next stage
             } else {
                 await sendMessageAndStoreId(chatId, 'Zəhmət olmasa düzgün ad və soyad daxil edin.');
             }
@@ -215,22 +215,6 @@ async function sendResults(chatId) {
     delete users[chatId];
     delete letnow[chatId];
 }
-
-                        users[chatId].currentQuestion += 1; // Move to the next question
-                        bot.sendMessage(chatId, quiz[1] === '9' ? questions9[quiz[0]].text : questions11[quiz[0]].text).then((sentMsg) => {
-                            messageIds[chatId].push(sentMsg.message_id);
-                        });
-                        letnow[chatId][0] = quiz[0] + 1;
-                    } else {
-                        bot.sendMessage(chatId, "Səhv yazdınız zəhmət olmasa yenidən yazın.").then((sentMsg) => {
-                            messageIds[chatId].push(sentMsg.message_id);
-                        });
-                    }
-                }
-            }
-        }
-    }
-});
 
 // Error handling
 bot.on('polling_error', (error) => {

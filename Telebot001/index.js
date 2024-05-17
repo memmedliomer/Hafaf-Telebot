@@ -186,26 +186,25 @@ bot.on('message', (msg) => {
             messageIds[chatId].push(sentMsg.message_id);
         });
         letnow[chatId] = [0, msg.text]; // Stage 0 indicates asking for name and surname
-        users[chatId] = { answers: [], grade: msg.text }; // Initialize user's data structure with grade
+        users[chatId] = { answers: [], grade: msg.text, currentQuestion: 0 }; // Initialize user's data structure with grade
     } else {
         if (msg.text == '/start') {
             delete users[chatId];
             delete letnow[chatId];
         } else if (msg.text == '/clear') {
             clearChatHistory(chatId).then(() => {
-                bot.sendMessage(chatId, 'Bütün söhbət silindi.Yenidən başlamaq üçün /start yazın.').then((sentMsg) => {
-                    messageIds[chatId] = [sentMsg.message_id];
-                });
+                bot.sendMessage(chatId, 'Bütün söhbət tarixçəsi silindi.');
             });
         } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
             let stage = letnow[chatId][0];
             if (stage > 1) {
                 letnow[chatId][0] = stage - 1;
-                bot.sendMessage(chatId, `Əvvəlki suala qayıtdınız.Cavabınızı dəyişdirin.\n${letnow[chatId][1] === '9' ? questions9[stage - 2].text : questions11[stage - 2].text}`).then((sentMsg) => {
+                users[chatId].currentQuestion = stage - 2; // Update current question to the previous one
+                bot.sendMessage(chatId, `Əvvəlki suala qayıtdınız. Cavabınızı dəyişdirin.\n${letnow[chatId][1] === '9' ? questions9[stage - 2].text : questions11[stage - 2].text}`).then((sentMsg) => {
                     messageIds[chatId].push(sentMsg.message_id);
                 });
             } else {
-                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz.Adınızı və soyadınız yazın.').then((sentMsg) => {
+                bot.sendMessage(chatId, 'Siz artıq ilk mərhələdəsiniz. Adınızı və soyadınız yazın.').then((sentMsg) => {
                     messageIds[chatId].push(sentMsg.message_id);
                 });
             }
@@ -229,8 +228,11 @@ bot.on('message', (msg) => {
                 let num = parseFloat(msg.text);
 
                 if (commands.indexOf(msg.text) == -1) {
-                    if (validateInput(num, (quiz[1] === '9' ? questions9[quiz[0] - 1].maxValue : questions11[quiz[0] - 1].maxValue))) {
-                        users[chatId].answers.push(num);
+                    let currentQuestionIndex = users[chatId].currentQuestion; // Current question index
+
+                    if (validateInput(num, (quiz[1] === '9' ? questions9[currentQuestionIndex].maxValue : questions11[currentQuestionIndex].maxValue))) {
+                        users[chatId].answers[currentQuestionIndex] = num; // Update the answer at the current question index
+
                         if (quiz[0] === (quiz[1] === '9' ? questions9.length : questions11.length)) {
                             if (quiz[1] === '9') {
                                 const eng = parseFloat(calculateScore9(users[chatId].answers[0], users[chatId].answers[1]).toFixed(2));
@@ -253,6 +255,7 @@ bot.on('message', (msg) => {
                             delete letnow[chatId];
                             return;
                         }
+                        users[chatId].currentQuestion += 1; // Move to the next question
                         bot.sendMessage(chatId, quiz[1] === '9' ? questions9[quiz[0]].text : questions11[quiz[0]].text).then((sentMsg) => {
                             messageIds[chatId].push(sentMsg.message_id);
                         });

@@ -107,8 +107,7 @@ function calculateTotalScore11(azerbaijaniScore, mathScore, englishScore) {
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     if (!users[chatId]) {
-        await sendMessageAndStoreId(chatId, 'Salam. Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamaq üçün düzəldilmiş bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n/start - Botun işə salınması\n/return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n/clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 2.4 kimi kəsr şəkilində də yaza bilərsiniz. Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız.\n\nBota ş
-                                    kil,fayl,səs yazısı və video göndərmək qəti qadağandır.\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+        await sendMessageAndStoreId(chatId, 'Salam. Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamaq üçün düzəldilmiş bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n/start - Botun işə salınması\n/return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n/clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 2.4 kimi kəsr şəkilində də yaza bilərsiniz. Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız.\n\nBota şkil,fayl,səs yazısı və video göndərmək qəti qadağandır.\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]

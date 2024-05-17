@@ -107,7 +107,8 @@ function calculateTotalScore11(azerbaijaniScore, mathScore, englishScore) {
 bot.onText(/\/start/, async (msg) => {
     const chatId = msg.chat.id;
     if (!users[chatId]) {
-        await sendMessageAndStoreId(chatId, 'Salam. Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamaq üçün düzəldilmiş bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n/start - Botun işə salınması\n/return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n/clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 4/3 kimi kəsr şəkilində də yaza bilərsiniz. Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız.\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
+        await sendMessageAndStoreId(chatId, 'Salam. Hədəf Steam Liseyinin DIM imtahan nəticənizi hesablamaq üçün düzəldilmiş bota xoş gəlmisiniz!\n\nBotdan istifadə təlimatları:\n/start - Botun işə salınması\n/return - Köhnə suala qayıdıb cavabın dəyişdirilməsi\n/clear - Söhbətin silinməsi\n\nAçıq suallarda nəticənizi 2.4 kimi kəsr şəkilində də yaza bilərsiniz. Əgər açıq suallarınız tam baldırsa kəsr yazmağa ehtiyac yoxdur, sadəcə rəqəm yazırsınız.\n\nBota ş
+                                    kil,fayl,səs yazısı və video göndərmək qəti qadağandır.\n\nZəhmət olmasa menyudan sinifinizi seçin...', {
             reply_markup: {
                 keyboard: [
                     [{ text: '9' }, { text: '11' }]
@@ -143,13 +144,13 @@ async function handleUserResponse(msg, chatId) {
         delete letnow[chatId];
     } else if (msg.text == '/clear') {
         await clearChatHistory(chatId);
-        await sendMessageAndStoreId(chatId, 'Bütün söhbət tarixçəsi silindi.');
+        await sendMessageAndStoreId(chatId, 'Söhbət tarixçəsi silindi.Botu yenidən işə salmaq üçün /start yazın.');
     } else if (msg.text == '/return' && letnow[chatId] !== undefined) {
         const stage = letnow[chatId][0];
         if (stage > 1) {
             letnow[chatId][0] = stage - 1;
             users[chatId].currentQuestion = stage - 2; // Update current question to the previous one
-            await sendMessageAndStoreId(chatId, `Əvvəlki suala qayıtdınız. Cavabınızı dəyişdirin.\n${letnow[chatId][1] === '9' ? questions9[stage - 2].text : questions11[stage - 2].text}`);
+            await sendMessageAndStoreId(chatId, `Əvvəlki suala qayıtdınız.Cavabınızı dəyişdirə bilərsiniz.\n${letnow[chatId][1] === '9' ? questions9[stage - 2].text : questions11[stage - 2].text}`);
         } else {
             await sendMessageAndStoreId(chatId, 'Siz artıq ilk mərhələdəsiniz. Adınızı və soyadınızı yazın.');
         }
@@ -181,7 +182,7 @@ async function handleUserResponse(msg, chatId) {
                     await sendResults(chatId);
                 }
             } else {
-                await sendMessageAndStoreId(chatId, `Düzgün cavab daxil edin (0-${maxValue}).`);
+                await sendMessageAndStoreId(chatId, `Səhv məlumat daxil etdiniz.Zəhmət olmasa düzgün cavabı daxil edin (0-${maxValue}).`);
             }
         }
     }
@@ -199,14 +200,14 @@ async function sendResults(chatId) {
         const mathScore = calculateMathScore9(answers[4], answers[5], answers[6]);
         const totalScore = calculateTotalScore9(englishScore, azerbaijaniScore, mathScore);
 
-        resultsText = `İngilis dili balınız: ${englishScore.toFixed(2)}\nAzərbaycan dili balınız: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat balınız: ${mathScore.toFixed(2)}\nÜmumi balınız: ${totalScore.toFixed(2)}`;
+        resultsText = `${nameSurname}\nİngilis dili balınız: ${englishScore.toFixed(2)}\nAzərbaycan dili balınız: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat balınız: ${mathScore.toFixed(2)}\n\nÜmumi balınız: ${totalScore.toFixed(2)}`;
     } else if (grade === '11') {
         const azerbaijaniScore = calculateAzerbaijaniScore11(answers[0], answers[1]);
         const mathScore = calculateMathScore11(answers[2], answers[3], answers[4]);
         const englishScore = calculateEnglishScore11(answers[5], answers[6]);
         const totalScore = calculateTotalScore11(azerbaijaniScore, mathScore, englishScore);
 
-        resultsText = `Azərbaycan dili balınız: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat balınız: ${mathScore.toFixed(2)}\nİngilis dili balınız: ${englishScore.toFixed(2)}\nÜmumi balınız: ${totalScore.toFixed(2)}`;
+        resultsText = `${nameSurname}\nAzərbaycan dili balınız: ${azerbaijaniScore.toFixed(2)}\nRiyaziyyat balınız: ${mathScore.toFixed(2)}\nİngilis dili balınız: ${englishScore.toFixed(2)}\n\nÜmumi balınız: ${totalScore.toFixed(2)}`;
     }
 
     await sendMessageAndStoreId(chatId, resultsText);

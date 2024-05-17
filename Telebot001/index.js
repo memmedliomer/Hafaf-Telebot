@@ -127,7 +127,7 @@ function calculateTotalScore11(azerbaijaniScore, mathScore, englishScore) {
 
 // Function to validate input
 function validateInput(value, maxValue) {
-    return value >= 0 && value <= maxValue && Number.isInteger(value);
+    return value >= 0 && value <= maxValue;
 }
 
 // Function to validate name and surname
